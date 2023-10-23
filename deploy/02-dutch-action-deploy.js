@@ -16,8 +16,8 @@ module.exports = async ({getNamedAccounts, deployments}) => {
 
     const args = [ethUsdPriceFeedAddress];
     log(args)
-    const fundMe = await deploy("FundMe", {
-        contract:'FundMe',
+    const dutchAuction = await deploy("DutchAuction", {
+        contract:'DutchAuction',
         from: deployer,
         args: args,
         log: true,
@@ -25,10 +25,10 @@ module.exports = async ({getNamedAccounts, deployments}) => {
     })
 
     if(!chainId === 31337 && process.env.ETHERSCAN_API_KEY){
-        await verify(fundMe.address, args)
+        await verify(dutchAuction.address, args)
     }
 
     log("-----------------------")
 }
 
-module.exports.tags = ["all", "fundMe"];
+module.exports.tags = ["all", "dutchAuction"];
