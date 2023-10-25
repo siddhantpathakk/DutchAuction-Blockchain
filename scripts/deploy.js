@@ -7,22 +7,21 @@
 const hre = require("hardhat");
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const unlockTime = currentTimestampInSeconds + 60;
+  const tokenContract = await ethers.deployContract("WFCoin", [1**4])
+  await tokenContract.waitForDeployment()
+  const contract = await ethers.deployContract("DutchAuction",[1,10**15,tokenContract.target])
+  await contract.waitForDeployment()
+  //await setTimeout(()=>{},5000)
+  provider = hre.ethers.provider
+  const [owner,addr1,addr2] = await ethers.getSigners();
+  const output = await contract.getPrice()
+  console.log("Token balance", await contract.getTokenBalance())
+  const buy1 = await contract.buy({value:hre.ethers.parseEther("0.1")})
+  
+  //console.log(await tokenContract.balanceOf(owner.address))
+  console.log("Price", output)
+  console.log("Token balance", await contract.getTokenBalance())
 
-  const lockedAmount = hre.ethers.parseEther("0.001");
-
-  const lock = await hre.ethers.deployContract("Lock", [unlockTime], {
-    value: lockedAmount,
-  });
-
-  await lock.waitForDeployment();
-
-  console.log(
-    `Lock with ${ethers.formatEther(
-      lockedAmount
-    )}ETH and unlock timestamp ${unlockTime} deployed to ${lock.target}`
-  );
 }
 
 // We recommend this pattern to be able to use async/await everywhere

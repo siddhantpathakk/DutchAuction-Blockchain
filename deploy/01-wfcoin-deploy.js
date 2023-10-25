@@ -6,12 +6,10 @@ module.exports = async ({getNamedAccounts, deployments}) => {
     const {deployer} = await getNamedAccounts();
     const chainId = network.config.chainId;
 
-    const WFCoin = await deployments.get("WFCoin");
-
-    const args = [1,10,WFCoin.address];
+    const args = [1000];
     log(args)
-    const dutchAuction = await deploy("DutchAuction", {
-        contract:'DutchAuction',
+    const dutchAuction = await deploy("WFCoin", {
+        contract:'WFCoin',
         from: deployer,
         args: args,
         log: true,
@@ -25,4 +23,4 @@ module.exports = async ({getNamedAccounts, deployments}) => {
     log("-----------------------")
 }
 
-module.exports.tags = ["all", "dutchAuction"];
+module.exports.tags = ["all", "wfcoin"];
