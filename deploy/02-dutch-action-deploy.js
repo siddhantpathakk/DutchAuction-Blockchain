@@ -8,7 +8,7 @@ module.exports = async ({getNamedAccounts, deployments}) => {
 
     const WFCoin = await deployments.get("WFCoin");
 
-    const args = [1,10,WFCoin.address];
+    const args = [(10**15-10**14)/(20*60),10**15,WFCoin.address];
     log(args)
     const dutchAuction = await deploy("DutchAuction", {
         contract:'DutchAuction',

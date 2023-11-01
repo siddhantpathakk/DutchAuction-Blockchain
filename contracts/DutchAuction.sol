@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
-import "hardhat/console.sol";
+//import "hardhat/console.sol";
 import "./WFCoin.sol";
 
 contract DutchAuction {
@@ -9,10 +9,12 @@ contract DutchAuction {
     address payable public immutable owner;
     uint public immutable expirationTime;
     uint public immutable startTime;
-    uint public constant reservedPrice = 1;
+    uint public constant reservedPrice = 10 ** 14;
     uint public immutable discountRate;
     uint public immutable startPrice;
     address immutable tokenContractAddress;
+    mapping(address => uint) private auctionStake;
+    uint private totalStake = 0;
     WFCoin wfcoin;
 
     constructor(uint _discountRate, uint _startPrice, address _token) {
@@ -27,31 +29,37 @@ contract DutchAuction {
 
     function getPrice() public view returns (uint) {
         uint elapsedTime = block.timestamp - startTime;
-        console.log("-----", startTime, block.timestamp, elapsedTime);
         uint discount = discountRate * elapsedTime;
-        return startPrice;
+
+        // console.log("\ndiscount:", discount);
+        // console.log("elapsed time:", elapsedTime);
+        // console.log("start Price:", startPrice);
+        // console.log("currentPrice:", startPrice - discount);
+        return startPrice - discount;
     }
 
-    function buy() external payable {
+    function buy() public payable returns (uint) {
         require(block.timestamp < expirationTime, "Auction time has elapsed");
         uint price = getPrice();
         require(msg.value >= price, "Not enough eth");
-        console.log("msg.value", msg.value);
+        auctionStake[msg.sender] = msg.value;
+        totalStake += msg.value;
         uint tokens = msg.value / price;
-        console.log("tokens purchased", tokens);
-        uint refund = msg.value - (msg.value % price);
-        uint balance = wfcoin.balanceOf(owner);
-
-        if (tokens > balance) {
-            wfcoin.transfer(msg.sender, balance);
-            //payable(msg.sender).transfer(msg.value - balance * price);
-        } else {
-            wfcoin.transfer(msg.sender, tokens);
-            //payable(msg.sender).transfer(refund);
-        }
+        // console.log("tokens staked", tokens, msg.sender);
+        return msg.value;
     }
 
-    function getTokenBalance() public view returns (uint256) {
-        return wfcoin.balanceOf(tokenContractAddress);
+    function claim() external payable returns (uint) {
+        uint price = getPrice();
+        uint tokens = auctionStake[msg.sender] / price;
+        console.log("tokens claimed", tokens, msg.sender);
+        tokens = tokens * (10 ** 18);
+        uint refund = auctionStake[msg.sender] -
+            (auctionStake[msg.sender] % price);
+        // console.log("transferring tokens:", tokens);
+        wfcoin.transfer(msg.sender, tokens);
+        //payable(msg.sender).transfer(refund);
+        auctionStake[msg.sender] = 0;
+        return tokens;
     }
 }

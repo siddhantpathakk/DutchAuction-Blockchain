@@ -7,22 +7,34 @@
 const hre = require("hardhat");
 
 async function main() {
-  const tokenContract = await ethers.deployContract("WFCoin", [1**4])
+  const tokenContract = await ethers.deployContract("WFCoin", [10**4])
   await tokenContract.waitForDeployment()
-  const contract = await ethers.deployContract("DutchAuction",[1,10**15,tokenContract.target])
+  let discountRate = (10**15-10**14)/(20*60)
+  const contract = await ethers.deployContract("DutchAuction",[discountRate,10**15,tokenContract.target])
   await contract.waitForDeployment()
-  //await setTimeout(()=>{},5000)
-  provider = hre.ethers.provider
-  const [owner,addr1,addr2] = await ethers.getSigners();
+  const [owner, address1] = await ethers.getSigners();
   const output = await contract.getPrice()
-  console.log("Token balance", await contract.getTokenBalance())
-  const buy1 = await contract.buy({value:hre.ethers.parseEther("0.1")})
+
+  await contract.connect(address1).buy({value:hre.ethers.parseEther("1.0")})
+
+  await contract.connect(owner).buy({value:hre.ethers.parseEther("1.0")})
+
+  await contract.connect(address1).claim()
+
+  await contract.connect(owner).claim()
+
+  // const buy2 = await contract.buy({value:hre.ethers.parseEther("0.1")})
+  // const buy3 = await contract.buy({value:hre.ethers.parseEther("0.1")})
+  // const buy4 = await contract.buy({value:hre.ethers.parseEther("0.1")})
+  console.log("\n\n")
+  console.log("Token balance", await tokenContract.balanceOf(owner), owner.address)
+  console.log("Token balance", await tokenContract.balanceOf(tokenContract.target), tokenContract.target)
+  console.log("Token balance", await tokenContract.balanceOf(address1), address1.address)
   
-  //console.log(await tokenContract.balanceOf(owner.address))
-  console.log("Price", output)
-  console.log("Token balance", await contract.getTokenBalance())
 
 }
+
+//0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.

@@ -8,6 +8,14 @@ import "hardhat/console.sol";
 
 contract WFCoin is ERC20 {
     constructor(uint256 initialSupply) ERC20("Waifu", "WFC") {
-        _mint(address(this), initialSupply);
+        _mint(address(this), initialSupply * (10 ** uint256(decimals())));
+    }
+
+    function transfer(
+        address to,
+        uint amount
+    ) public virtual override returns (bool) {
+        _transfer(address(this), to, amount);
+        return true;
     }
 }

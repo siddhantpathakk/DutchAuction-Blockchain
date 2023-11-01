@@ -1,0 +1,49 @@
+.App{
+  background-image: url(../assets/bg-img.avif);
+  background-size: cover;
+  width: 100vw;
+  height: 100vh;
+  align-content: center;
+  position: relative;
+}
+
+.title{
+  font-size: 10vh;
+  font-family:'Times New Roman', Times, serif;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%,-50% );
+  position: absolute;
+}
+
+.ButtonRow{
+  position: absolute;
+  top: 50%;
+  display: flex;
+  transform: translateY(-50%);
+  justify-content: space-around;
+  width: 100vw;
+}
+
+.StatusRow{
+  position: absolute;
+    top: 60%;
+    display: flex;
+    width: 100vw;
+    transform: translateY(-50%);
+    justify-content: space-around;
+    border: 5px, wheat;
+}
+
+.Input {
+  position: absolute;
+  top: 70%;
+  display: flex;
+  width: 100vw;
+  transform: translateY(-50%);
+  justify-content: space-around;
+  border: 5px, wheat;
+}
