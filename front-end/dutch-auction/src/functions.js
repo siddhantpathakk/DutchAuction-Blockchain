@@ -1,5 +1,7 @@
 import { ethers } from "ethers";
-import { abi, contractAddress } from "./constants";
+import { abi, contractAddress, abi2 } from "./constants";
+import { errors } from "./err";
+
 export const getPrice = async () => {
   if (typeof window.etheruem !== undefined) {
     await window.ethereum.request({ method: "eth_requestAccounts" });
@@ -12,13 +14,13 @@ export const getPrice = async () => {
     } catch (e) {
       console.log(e);
     }
-    console.log(transactiponResponse.toNumber());
-    return transactiponResponse.toNumber();
+    console.log(transactiponResponse.toNumber() / 10 ** 18);
+    return transactiponResponse.toNumber() / 10 ** 18;
   }
 };
 
 export const stake = async (ethAmount) => {
-  ethAmount = "0.1";
+  console.log(typeof ethAmount);
   if (typeof window.etheruem !== undefined) {
     await window.ethereum.request({ method: "eth_requestAccounts" });
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -30,22 +32,17 @@ export const stake = async (ethAmount) => {
         value: ethers.utils.parseEther(ethAmount),
       });
       console.log(transactiponResponse);
-      console.log(transactiponResponse.value);
+      console.log(transactiponResponse.value.toString());
     } catch (err) {
       console.log(err.reason);
-      if (
-        (err.reason =
-          "Error: VM Exception while processing transaction: reverted with reason string 'Auction time has elapsed'")
-      ) {
-        return "Auction has finished!";
-      }
+      console.log(errors);
+      return errors[err.reason];
     }
     return `Eth staked: ${ethAmount}`;
   }
 };
 
 export const claim = async () => {
-  const ethAmount = "0.1";
   if (typeof window.etheruem !== undefined) {
     await window.ethereum.request({ method: "eth_requestAccounts" });
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -55,10 +52,50 @@ export const claim = async () => {
     try {
       transactiponResponse = await contract.claim();
       console.log(transactiponResponse);
+      console.log(transactiponResponse.value.toString());
+    } catch (err) {
+      console.log(err.reason);
+    }
+  }
+};
+
+export const attack = async () => {
+  if (typeof window.etheruem !== undefined) {
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      abi2,
+      signer
+    );
+    let transactiponResponse;
+    try {
+      transactiponResponse = await contract.attack({
+        value: ethers.utils.parseEther("1.0"),
+      });
+      console.log(transactiponResponse);
       console.log(transactiponResponse.value);
     } catch (err) {
-      err = JSON.stringify(err, Object.getOwnPropertyNames(err));
-      console.log(err);
+      console.log(err.reason);
+    }
+  }
+};
+
+export const getTokens = async () => {
+  if (typeof window.etheruem !== undefined) {
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(contractAddress, abi, signer);
+    let transactiponResponse;
+    try {
+      transactiponResponse = await contract.getTokenBalance();
+      //console.log(ethers.utils.formatEther(transactiponResponse));
+      console.log(transactiponResponse.toNumber());
+    } catch (e) {
+      console.log("err");
+      console.log(e);
     }
   }
 };

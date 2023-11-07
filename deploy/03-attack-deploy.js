@@ -6,21 +6,17 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deployer } = await getNamedAccounts();
   const chainId = network.config.chainId;
 
-  const WFCoin = await deployments.get("WFCoin");
+  const DutchAuction = await deployments.get("DutchAuction");
 
-  const args = [(10 ** 15 - 10 ** 14) / (20 * 60), 10 ** 15, WFCoin.address];
-  console.log(args);
-  const dutchAuction = await deploy("DutchAuction", {
-    contract: "DutchAuction",
+  const args = [DutchAuction.address];
+  log(args);
+  const Attack = await deploy("Attack", {
+    contract: "Attack",
     from: deployer,
     args: args,
     log: true,
+    waitConfirmations: network.config.blockConfirmations || 1,
   });
-
-  const [owner] = await ethers.getSigners();
-  const contract = new ethers.Contract(WFCoin.address, WFCoin.abi, owner);
-
-  await contract.changeOwner(dutchAuction.address);
 
   if (!chainId === 31337 && process.env.ETHERSCAN_API_KEY) {
     await verify(dutchAuction.address, args);
@@ -29,4 +25,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   log("-----------------------");
 };
 
-module.exports.tags = ["all", "dutchAuction"];
+module.exports.tags = ["all", "attack"];

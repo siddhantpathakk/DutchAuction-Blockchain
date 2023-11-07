@@ -1,13 +1,13 @@
 import "./App.css";
 import { useEffect, useState } from "react";
-import { getPrice, stake, claim } from "./functions.js";
+import { getPrice, stake, claim, attack, getTokens } from "./functions.js";
 
 function App() {
   const [ethAmount, setEthAmount] = useState(0);
   const [currentPrice, setPrice] = useState(0);
   const [MM_connected, setState] = useState(false);
-  const [stake, setStake] = useState("Eth Staked : 0");
-  const [claim, setClaim] = useState("Auction in Progress");
+  const [staked, setStake] = useState("Eth Staked : 0");
+  const [claimed, setClaim] = useState("Auction in Progress");
   useEffect(() => {
     (async function () {
       setState(await checkMM());
@@ -19,7 +19,8 @@ function App() {
   }
 
   async function updateStake() {
-    setStake(await stake());
+    console.log(ethAmount);
+    setStake(await stake(ethAmount));
   }
 
   async function updateClaim() {
@@ -39,18 +40,20 @@ function App() {
       <div className="StatusRow">
         <span>{MM_connected ? "Connected" : "Connect to MetaMask"}</span>
         <span>{currentPrice}</span>
-        <span>{stake}</span>
-        <span>tokens claimed</span>
+        <span>{staked}</span>
+        <span>{claimed}</span>
       </div>
       <div className="Input">
         <input
           value={ethAmount}
-          onChange={(event) =>
-            setEthAmount({
-              ethAmount: event.target.value.replace(/\D/, ""),
-            })
-          }
+          onInput={(e) => setEthAmount(e.target.value)}
         />
+      </div>
+      <div>
+        <button onClick={attack}>attack</button>
+      </div>
+      <div>
+        <button onClick={getTokens}>getTokenBalance</button>
       </div>
     </div>
   );
