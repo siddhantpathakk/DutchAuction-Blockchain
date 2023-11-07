@@ -22,6 +22,7 @@ export const getPrice = async () => {
 export const stake = async (ethAmount) => {
   console.log(typeof ethAmount);
   if (typeof window.etheruem !== undefined) {
+    console.log("---test----");
     await window.ethereum.request({ method: "eth_requestAccounts" });
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -53,8 +54,14 @@ export const claim = async () => {
       transactiponResponse = await contract.claim();
       console.log(transactiponResponse);
       console.log(transactiponResponse.value.toString());
+      return "Please Claim Now";
     } catch (err) {
       console.log(err.reason);
+      if (errors[err.reason]) {
+        return errors[err.reason];
+      } else {
+        return "";
+      }
     }
   }
 };
@@ -88,7 +95,7 @@ export const getTokens = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const contract = new ethers.Contract(contractAddress, abi, signer);
-    let transactiponResponse;
+    let transactiponResponse = "";
     try {
       transactiponResponse = await contract.getTokenBalance();
       //console.log(ethers.utils.formatEther(transactiponResponse));
@@ -97,5 +104,25 @@ export const getTokens = async () => {
       console.log("err");
       console.log(e);
     }
+    return transactiponResponse.toString();
+  }
+};
+
+export const auctionStatus = async () => {
+  if (typeof window.etheruem !== undefined) {
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(contractAddress, abi, signer);
+    let transactiponResponse = "";
+    try {
+      transactiponResponse = await contract.auctionFinished();
+      //console.log(ethers.utils.formatEther(transactiponResponse));
+      console.log(transactiponResponse);
+    } catch (e) {
+      console.log("err");
+      console.log(e);
+    }
+    return transactiponResponse.toString();
   }
 };

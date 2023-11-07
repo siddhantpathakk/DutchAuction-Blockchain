@@ -49,6 +49,19 @@ export const abi = [
   },
   {
     inputs: [],
+    name: "auctionFinished",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "buy",
     outputs: [
       {
