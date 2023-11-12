@@ -115,14 +115,20 @@ export const auctionStatus = async () => {
     const signer = provider.getSigner();
     const contract = new ethers.Contract(contractAddress, abi, signer);
     let transactiponResponse = "";
+    let tx = "";
     try {
       transactiponResponse = await contract.auctionFinished();
+      tx = await contract.getStatus();
       //console.log(ethers.utils.formatEther(transactiponResponse));
-      console.log(transactiponResponse);
+      console.log(tx);
     } catch (e) {
       console.log("err");
       console.log(e);
     }
-    return transactiponResponse.toString();
+    if (tx) {
+      return "Auction Finished";
+    } else {
+      return "Auction in Progress";
+    }
   }
 };

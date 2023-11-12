@@ -1,6 +1,6 @@
 # BlockChain Project
 
-This project inplements a DutchAuction selling ERC20 coins
+This project implements a DutchAuction selling ERC20 coins
 
 To get started, clone this repo and open command shell in the root of the project.
 

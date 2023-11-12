@@ -1,0 +1,24 @@
+.Title{
+    color: white;
+    font-size: 80px;
+    font-weight: bold;
+    margin-left: 10%;
+    margin-top: 5%;
+    text-shadow: 4px 4px #ababab;
+}
+
+.Intro{
+    color: white;
+    margin-left: 10%;
+    font-size: 20px;
+    
+}
+
+.Card-Wrapper {
+    margin-top: 2%;
+    display: flex;
+    width: 70vw;
+    align-items:center;
+    justify-content: space-between;
+    transform: translateX(16%);
+}

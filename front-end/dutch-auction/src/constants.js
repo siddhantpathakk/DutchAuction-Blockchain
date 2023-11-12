@@ -140,6 +140,19 @@ export const abi = [
   },
   {
     inputs: [],
+    name: "getStatus",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "getTokenBalance",
     outputs: [
       {
@@ -211,6 +224,19 @@ export const abi = [
   {
     inputs: [],
     name: "startTime",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "tokenSupply",
     outputs: [
       {
         internalType: "uint256",

@@ -1,74 +1,35 @@
 import "./App.css";
-import { useEffect, useState } from "react";
-import {
-  getPrice,
-  stake,
-  claim,
-  auctionStatus,
-  getTokens,
-} from "./functions.js";
+import DrawerAppBar from "./Components/AppBar.js";
+import "./Components/AuctionPage.js";
+import AuctionPage from "./Components/AuctionPage.js";
+import HomePage from "./Components/HomePage.js";
+import InfoPage from "./Components/InfoPage.js";
+import { useState } from "react";
 
 function App() {
-  const [ethAmount, setEthAmount] = useState(0);
-  const [currentPrice, setPrice] = useState(0);
-  const [staked, setStake] = useState("Eth Staked : 0");
-  const [claimed, setClaim] = useState("Auction in Progress");
-  const [tokenBalance, setTokenBalance] = useState("1000");
-  const [status, setStatus] = useState("In Progress");
+  const [page, setPage] = useState(1);
 
-  async function updatePrice() {
-    setPrice(await getPrice());
-  }
-
-  async function updateStake() {
-    console.log(ethAmount);
-    const str = await stake(ethAmount);
-    setStake(str);
-    if (str === "Auction Time has Elapsed") {
-      setClaim("Please Claim Now");
+  function RenderPage(props) {
+    if (page === 1) {
+      return <HomePage />;
     }
-    if (str == "Tokens Sold Out") {
-      setClaim("Please Claim Now");
+    if (page === 2) {
+      return <AuctionPage />;
+    }
+    if (page === 3) {
+      return <InfoPage />;
     }
   }
 
-  async function updateClaim() {
-    setClaim(await claim());
+  function updatePage(page) {
+    console.log(page);
+    setPage(page);
   }
 
-  async function updateTokenBalance() {
-    setTokenBalance(await getTokens());
-  }
-
-  async function updateStatus() {
-    setStatus(await auctionStatus());
-  }
   return (
     <div className="App">
-      <div className="title">WFCoin</div>
-      <div className="ButtonRow">
-        <button className="Button" onClick={updateStatus}>
-          Auction Status
-        </button>
-        <button onClick={updatePrice}>Get Current Price</button>
-        <button onClick={updateStake}>Stake Eth</button>
-        <button onClick={updateClaim}>Claim Tokens</button>
-        <button onClick={updateTokenBalance}>Token Balance</button>
-      </div>
-      <div className="StatusRow">
-        <span>{status}</span>
-        <span>{currentPrice} eth/coin</span>
-        <span>{staked}</span>
-        <span>{claimed}</span>
-        <span>{tokenBalance}</span>
-      </div>
-      <div className="Input">
-        <input
-          value={ethAmount}
-          onInput={(e) => setEthAmount(e.target.value)}
-          placeholder="Enter Amount of Eth to stake"
-        />
-      </div>
+      <DrawerAppBar updatePage={updatePage} />
+      <RenderPage />
     </div>
   );
 }

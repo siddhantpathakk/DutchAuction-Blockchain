@@ -9,9 +9,10 @@ contract DutchAuction {
     address payable public immutable owner;
     uint public immutable expirationTime;
     uint public immutable startTime;
-    uint public constant reservedPrice = 10 ** 14;
+    uint public immutable reservedPrice;
     uint public immutable discountRate;
     uint public immutable startPrice;
+    uint public immutable tokenSupply;
     uint public finalPrice;
     address immutable tokenContractAddress;
     mapping(address => uint) private auctionStake;
@@ -32,8 +33,10 @@ contract DutchAuction {
         startTime = block.timestamp;
         discountRate = _discountRate;
         startPrice = _startPrice;
+        reservedPrice = 10 ** 14;
         owner = payable(msg.sender);
         tokenContractAddress = _token;
+        tokenSupply = 1000;
         wfcoin = WFCoin(_token);
         AuctionFinished = false;
     }
@@ -64,11 +67,11 @@ contract DutchAuction {
         require(block.timestamp < expirationTime, "AUCTION TIME HAS ELAPSED");
         uint price = getPrice();
         require(msg.value >= price, "NOT ENOUGH ETH");
-        if (msg.value + totalStake > price * 1000) {
+        if (msg.value + totalStake > price * tokenSupply) {
             finalPrice = price;
             AuctionFinished = true;
-            uint difference = msg.value + totalStake - finalPrice * 1000;
-            console.log("difference", difference / 10 ** 14);
+            uint difference = msg.value + totalStake - finalPrice * tokenSupply;
+            console.log("difference", difference / reservedPrice);
             totalStake += msg.value - difference;
             auctionStake[msg.sender] += msg.value - difference;
             refund(difference, msg.sender);
@@ -93,16 +96,15 @@ contract DutchAuction {
     }
 
     function getTokenBalance() public view returns (uint) {
-        int balance = 1000 - int(totalStake / getPrice());
-        console.log("balance");
-        console.logInt(balance);
-        return 1000 - (totalStake / getPrice());
+        uint balance = tokenSupply - (totalStake / getPrice());
+        console.log("balance", balance);
+        return tokenSupply - (totalStake / getPrice());
     }
 
     function auctionFinished() public returns (bool) {
         if (AuctionFinished) return true;
-        if (totalStake >= getPrice() * 1000) {
-            finalPrice = totalStake / 1000;
+        if (totalStake >= getPrice() * tokenSupply) {
+            finalPrice = totalStake / tokenSupply;
             console.log("block timestamp", block.timestamp);
             console.log("expiration time", expirationTime);
             console.log("Setting Auction status to finished");
@@ -123,6 +125,10 @@ contract DutchAuction {
             return true;
         }
         return false;
+    }
+
+    function getStatus() public view returns (bool) {
+        return AuctionFinished;
     }
 
     // receive() external payable {
