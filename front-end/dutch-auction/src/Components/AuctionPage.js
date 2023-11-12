@@ -32,7 +32,11 @@ function AuctionPage() {
   }
 
   async function updateClaim() {
-    setClaim(await claim());
+    const claimstr = await claim();
+    if (claimstr === "Please Claim Now") {
+      setStatus("Auction Finished");
+    }
+    setClaim(claimstr);
   }
 
   async function updateTokenBalance() {
@@ -40,7 +44,11 @@ function AuctionPage() {
   }
 
   async function updateStatus() {
-    setStatus(await auctionStatus());
+    const statusStr = await auctionStatus();
+    if (statusStr === "Auction Finished") {
+      setClaim("Please Claim Now");
+    }
+    setStatus(statusStr);
   }
   return (
     <div className="Wrapper">

